@@ -1,0 +1,24 @@
+import folium
+import pandas as pd
+from sodapy import Socrata
+
+
+def main(inputs):
+    # Create a folium map
+    maps = displaying_map()
+    data = request_files()
+    return {"maps": maps, "data": data}
+
+
+def displaying_map(inputs):
+    m = folium.Map(location=[53.5461, -113.4937],
+                   zoom_start=15, tiles=inputs['map_tile'])
+    map_html = m._repr_html_()
+    return {"map": map_html}
+
+
+def request_files():
+    client = Socrata("data.edmonton.ca", None)
+    results = client.get("7fnd-72gr")
+    results_df = pd.DataFrame.from_records(results)
+    return results_df
