@@ -1,0 +1,41 @@
+import geopandas
+import pandas as pd
+import mecsimcalc as msc
+import matplotlib 
+
+
+def main(inputs):
+    # (i) Use a geopandas dataset
+    path_to_data = geopandas.datasets.get_path(inputs['dataset'])
+    gdf = geopandas.read_file(path_to_data)
+    # Manipulate geospatial data
+    gdf['centroid'] = gdf.centroid
+    first_point = gdf['centroid'].iloc[0]
+    # Calculate distance to first_point
+    gdf['distance'] = geopandas.GeoSeries(
+        gdf['centroid']).distance(first_point)
+    mean_of_distance = gdf['distance'].mean()
+    # (a) Export distance column as an interactive map
+    m = gdf.explore("distance", legend=True)
+    interactive_map = m._repr_html_()
+
+    # (ii) Use a custom pandas dataset
+    df = pd.DataFrame(
+        {'City': ['Buenos Aires', 'Brasilia', 'Santiago', 'Bogota', 'Caracas'],
+         'Country': ['Argentina', 'Brazil', 'Chile', 'Colombia', 'Venezuela'],
+         'Latitude': [-34.58, -15.78, -33.45, 4.60, 10.48],
+         'Longitude': [-58.66, -47.91, -70.66, -74.08, -66.86]})
+    # Convert Pandas dataframe to GeoDataFrame
+    gdf = geopandas.GeoDataFrame(
+        # Use points_from_xy to convert to shapely.Point objects
+        df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude)
+    )
+    # Use a map of South America
+    path_to_data = geopandas.datasets.get_path("naturalearth_lowres")
+    world = geopandas.read_file(path_to_data)
+    ax = world[world.continent == 'South America'].plot(color='white', edgecolor='black')
+    # (b) Export as a static image
+    m = gdf.plot(ax=ax, color="red")
+    static_map = msc.print_plot(m.figure)
+
+    return {"interactive_map": interactive_map, "static_map": static_map, "mean_of_distance": mean_of_distance}

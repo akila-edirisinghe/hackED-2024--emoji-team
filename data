@@ -1,0 +1,83 @@
+import folium
+import pandas as pd
+from sodapy import Socrata
+
+
+def request_files():
+    client = Socrata("data.edmonton.ca", None)
+    results = client.get("7fnd-72gr")
+    results_df = pd.DataFrame.from_records(results)
+    return results_df
+
+def main(inputs):
+
+    m = folium.Map(location=[53.5461, -113.4937],
+                   zoom_start=15, tiles=inputs['map_tile'])
+    
+    data = request_files()
+    reason = data['reason_codes(s)'].tolist()
+    latitude = data['latitude'].tolist()
+    longitude = data['longitude'].tolist()
+    speed = data['posted_speed'].tolist()
+    address = data['approach'].tolist()
+
+    for x in longitude:
+        for y in latitude:
+            for r in reason:
+                if r == "(a)":
+                    folium.Marker(
+                        location = [y,x], 
+                        popup=["<i>Higher frequency of collisions<i>\n", "<i>Speed limit: <i>", speed, "\n<i>Address:<i>", address], 
+                        tooltip="Intersection Safety Device",
+                        icon=folium.Icon(color="blue", icon="camera")
+                    ).add_to(m)
+                    
+                elif r == "(b)":
+                    folium.Marker(
+                        location = [y,x], 
+                        popup=["<i>Higher frequency of speedin\n<i>", "<i>Speed limit: <i>", speed, "\n<i>Address:<i>", address], 
+                        tooltip="Intersection Safety Device",
+                        icon=folium.Icon(color="yellow", icon="camera")
+                    ).add_to(m)
+                    
+                elif r == "(c)":
+                    folium.Marker(
+                        location = [y,x], 
+                        popup=["<i>History of red light offences\n<i>", "<i>Speed limit: <i>", speed, "\n<i>Address:<i>", address], 
+                        tooltip="Intersection Safety Device",
+                        icon=folium.Icon(color="red", icon="camera")
+                    ).add_to(m)
+                    
+                elif r == "(b)" and r == "(a)":
+                    folium.Marker(
+                        location = [y,x], 
+                        popup=["<i>Higher frequency of speeding\nHigher frequency of collisions\n<i>", "<i>Speed limit: <i>", speed, "\n<i>Address:<i>", address], 
+                        tooltip="Intersection Safety Device",
+                        icon=folium.Icon(color="green", icon="camera")
+                    ).add_to(m)
+                    
+                elif r == "(b)" and r == "(c)":
+                    folium.Marker(
+                        location = [y,x], 
+                        popup=["<i>Higher frequency of speeding\nHistory of red light offences\n<i>", "<i>Speed limit: <i>", speed, "\n<i>Address:<i>", address], 
+                        tooltip="Intersection Safety Device",
+                        icon=folium.Icon(color="orange", icon="camera")
+                    ).add_to(m)
+                    
+                elif r == "(a)" and r == "(c)":
+                    folium.Marker(
+                        location = [y,x], 
+                        popup=["<i>Higher frequency of collisions\nHistory of red light offences\n<i>", "<i>Speed limit: <i>", speed, "\n<i>Address:<i>", address], 
+                        tooltip="Intersection Safety Device",
+                        icon=folium.Icon(color="green", icon="camera")
+                    ).add_to(m)
+                    
+                else:
+                    folium.Marker(
+                        location = [y,x], 
+                        popup=["<i>Higher frequency of collisions\nHigher frequency of speeding\nHistory of red light offences\n<i>", "<i>Speed limit: <i>", speed, "\n<i>Address:<i>", address], 
+                        tooltip="Intersection Safety Device",
+                        icon=folium.Icon(color="black", icon="camera")
+                    ).add_to(m)
+    map_html = m._repr_html_()
+    return{"map": map_html}
