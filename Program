@@ -37,49 +37,49 @@ def marker(m):
         if r == "(a)":
             folium.Marker(
                 location=[y, x],
-                popup= folium.Popup(('Higher frequency of collisions<br>'+'Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300, color='pink'),
+                popup= folium.Popup(('Higher frequency of collisions<br>'+'Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300),
                 tooltip="Intersection Safety Device",
                 icon=folium.Icon(color="blue", icon="camera")
             ).add_to(m)
         elif r == "(b)":
             folium.Marker(
                 location=[y, x],
-                popup=folium.Popup(('Higher frequency of speeding'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300, color='pink'),
+                popup=folium.Popup(('Higher frequency of speeding'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300),
                 tooltip="Intersection Safety Device",
                 icon=folium.Icon(color="yellow", icon="camera")
             ).add_to(m)
         elif r == "(c)":
             folium.Marker(
                 location=[y, x],
-                popup=folium.Popup(('History of red-light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300, color='pink'),
+                popup=folium.Popup(('History of red-light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300),
                 tooltip="Intersection Safety Device",
                 icon=folium.Icon(color="red", icon="camera")
             ).add_to(m)
         elif r == "(a)(b)":
             folium.Marker(
                 location=[y, x],
-                popup=folium.Popup(('Higher frequency of speeding<br>Higher frequency of collisions'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300, color='pink'),
+                popup=folium.Popup(('Higher frequency of speeding<br>Higher frequency of collisions'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300),
                 tooltip="Intersection Safety Device",
                 icon=folium.Icon(color="green", icon="camera")
             ).add_to(m)
         elif r == "(b)(c)":
             folium.Marker(
                 location=[y, x],
-                popup=folium.Popup(('Higher frequency of speeding<br>History of red light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300, color='pink'),
+                popup=folium.Popup(('Higher frequency of speeding<br>History of red light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300),
                 tooltip="Intersection Safety Device",
                 icon=folium.Icon(color="orange", icon="camera")
             ).add_to(m)
         elif r == "(a)(c)":
             folium.Marker(
                 location=[y, x],
-                popup=folium.Popup(('Higher frequency of collisions<br>History of red light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300, color='pink'),
+                popup=folium.Popup(('Higher frequency of collisions<br>History of red light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300),
                 tooltip="Intersection Safety Device",
                 icon=folium.Icon(color="green", icon="camera")
             ).add_to(m)
         else:
             folium.Marker(
                 location=[y, x],
-                popup=folium.Popup(('Higher frequency of collisions<br>Higher frequency of speeding<br>History of red light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300, color='pink'),
+                popup=folium.Popup(('Higher frequency of collisions<br>Higher frequency of speeding<br>History of red light offences'+'<br>Speed limit: '+speed[i]+'<br>Address: '+address[i]), max_width=300, min_width=300),
                 tooltip="Intersection Safety Device",
                 icon=folium.Icon(color="black", icon="camera")
             ).add_to(m)
