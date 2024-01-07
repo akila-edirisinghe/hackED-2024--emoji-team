@@ -1,0 +1,87 @@
+import folium
+import pandas as pd
+from sodapy import Socrata
+
+
+def request_files():
+    client = Socrata("data.edmonton.ca", None)
+    results = client.get("7fnd-72gr")
+    results_df = pd.DataFrame.from_records(results)
+    return results_df
+
+
+def main(inputs):
+
+    m = folium.Map(location=[53.5461, -113.4937],
+                   zoom_start=15, tiles=inputs['map_tile'])
+    marker(m)
+    map_html = m._repr_html_()
+
+    return {"map": map_html}
+
+
+def marker(m):
+
+    data = request_files()
+    latitude = data['latitude'].tolist()
+    longitude = data['longitude'].tolist()
+    speed = data['posted_speed'].tolist()
+    address = data['approach'].tolist()
+    reason = data['reason_code_s'].tolist()
+
+    i = 0
+    while i < len(longitude):
+        x = longitude[i]
+        y = latitude[i]
+        r = reason[i]
+        if r == "(a)":
+            folium.Marker(
+                location=[y, x],
+                popup= ('Higher frequency of collisions'+'\nSpeed limit: '+speed[i]+'\nAddress: '+address[i]),
+                tooltip="Intersection Safety Device",
+                icon=folium.Icon(color="blue", icon="camera")
+            ).add_to(m)
+        elif r == "(b)":
+            folium.Marker(
+                location=[y, x],
+                popup=('Higher frequency of speeding'+'\nSpeed limit: '+speed[i]+'\nAddress: '+address[i]),
+                tooltip="Intersection Safety Device",
+                icon=folium.Icon(color="yellow", icon="camera")
+            ).add_to(m)
+        elif r == "(c)":
+            folium.Marker(
+                location=[y, x],
+                popup=('History of red-light offences'+'\nSpeed limit: '+speed[i]+'\nAddress: '+address[i]),
+                tooltip="Intersection Safety Device",
+                icon=folium.Icon(color="red", icon="camera")
+            ).add_to(m)
+        elif r == "(a)(b)":
+            folium.Marker(
+                location=[y, x],
+                popup=('Higher frequency of speeding\nHigher frequency of collisions'+'\nSpeed limit: '+speed[i]+'\nAddress: '+address[i]),
+                tooltip="Intersection Safety Device",
+                icon=folium.Icon(color="green", icon="camera")
+            ).add_to(m)
+        elif r == "(b)(c)":
+            folium.Marker(
+                location=[y, x],
+                popup=('Higher frequency of speeding\nHistory of red light offences'+'\nSpeed limit: '+speed[i]+'\nAddress: '+address[i]),
+                tooltip="Intersection Safety Device",
+                icon=folium.Icon(color="orange", icon="camera")
+            ).add_to(m)
+        elif r == "(a)(c)":
+            folium.Marker(
+                location=[y, x],
+                popup=('Higher frequency of collisions\nHistory of red light offences'+'\nSpeed limit: '+speed[i]+'\nAddress: '+address[i]),
+                tooltip="Intersection Safety Device",
+                icon=folium.Icon(color="green", icon="camera")
+            ).add_to(m)
+        else:
+            folium.Marker(
+                location=[y, x],
+                popup=('Higher frequency of collisions\nHigher frequency of speeding\nHistory of red light offences'+'\nSpeed limit: '+speed[i]+'\nAddress: '+address[i]),
+                tooltip="Intersection Safety Device",
+                icon=folium.Icon(color="black", icon="camera")
+            ).add_to(m)
+        i += 1
+
